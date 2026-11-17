@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@source "../../templates/**/*.html";
+
+@theme {
+  --color-cherry: #b82f2b;
+  --color-coral: #ef777c;
+  --color-cream: #f7f7f2;
+  --color-chocolate: #49332f;
+  --color-ink: #482e2c;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
+}

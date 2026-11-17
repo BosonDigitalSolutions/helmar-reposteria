@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{% if object %}Editar producto{% else %}Nuevo producto{% endif %}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-6 font-display text-4xl text-chocolate">{% if object %}Editar producto{% else %}Nuevo producto{% endif %}</h1>
+  <form class="max-w-3xl rounded-3xl bg-white p-6" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="mb-4 rounded-2xl bg-coral/15 px-4 py-3 text-sm text-cherry" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% for field in form %}{% include "components/field.html" %}{% endfor %}
+    <fieldset class="mb-6">
+      <legend class="mb-2 font-semibold text-chocolate">Presentaciones</legend>
+      {{ presentations.management_form }}
+      {% for item in presentations %}
+        <div class="mb-3 grid gap-2 sm:grid-cols-2">
+          {% for field in item.visible_fields %}{% include "components/field.html" %}{% endfor %}
+          {% for hidden in item.hidden_fields %}{{ hidden }}{% endfor %}
+        </div>
+      {% endfor %}
+    </fieldset>
+    <fieldset class="mb-6">
+      <legend class="mb-2 font-semibold text-chocolate">Opciones de personalización</legend>
+      {{ options.management_form }}
+      {% for item in options %}
+        <div class="mb-3 grid gap-2 sm:grid-cols-2">
+          {% for field in item.visible_fields %}{% include "components/field.html" %}{% endfor %}
+          {% for hidden in item.hidden_fields %}{{ hidden }}{% endfor %}
+        </div>
+      {% endfor %}
+    </fieldset>
+    {% if object.pk %}
+      <fieldset class="mb-6">
+        <legend class="mb-2 font-semibold text-chocolate">Fotografías actuales</legend>
+        {% for image in object.images.all %}
+          <label class="mb-2 flex items-center gap-3 text-sm">
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="h-16 w-16 rounded-xl object-cover">
+            <input type="checkbox" name="delete_image" value="{{ image.pk }}"> Quitar esta fotografía
+          </label>
+        {% endfor %}
+      </fieldset>
+    {% endif %}
+    <div class="flex gap-3">
+      <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Guardar</button>
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'catalog:product_list' %}">Cancelar</a>
+      {% if object and perms.catalog.delete_product %}
+        <a class="rounded-full px-4 py-2 text-sm font-semibold text-cherry" href="{% url 'catalog:product_delete' object.pk %}">Eliminar</a>
+      {% endif %}
+    </div>
+  </form>
+{% endblock %}

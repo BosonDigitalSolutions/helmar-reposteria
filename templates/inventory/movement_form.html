@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+{% load money %}
+
+{% block title %}Movimiento{% endblock %}
+
+{% block content %}
+  <h1 class="font-display text-4xl text-chocolate">{{ ingredient.name }}</h1>
+  <p class="mt-2 text-chocolate/80">Existencia: {{ ingredient.stock_quantity }} {{ ingredient.get_unit_display }}</p>
+  <form class="mt-6 max-w-xl" method="post">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <p class="mb-4 text-sm text-cherry" role="alert">{{ form.non_field_errors|striptags }}</p>
+    {% endif %}
+    {% for field in form.visible_fields %}
+      {% include "components/field.html" with field=field %}
+    {% endfor %}
+    <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Registrar</button>
+  </form>
+  {% if movements %}
+    <ul class="mt-6 max-w-xl space-y-2 text-sm">
+      {% for movement in movements %}
+        <li class="rounded-2xl bg-white px-4 py-3">{{ movement.occurred_on|date:"d/m/Y" }} · {{ movement.get_kind_display }} · {{ movement.quantity }}{% if movement.amount %} · {{ movement.amount|pesos }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

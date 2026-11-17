@@ -1,0 +1,70 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-display text-4xl text-chocolate">Clientes</h1>
+      <p class="mt-2 text-chocolate/80">Lead, prospecto y cliente son estados distintos.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if perms.crm.add_contact %}
+        <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'crm:import_upload' %}">Importar CSV</a>
+        {% if perms.crm.change_crmsettings %}
+          <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'crm:settings' %}">Reglas</a>
+        {% endif %}
+        <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'crm:contact_create' %}">Nuevo contacto</a>
+      {% endif %}
+    </div>
+  </div>
+  <form class="mb-4 flex flex-wrap gap-2" method="get">
+    <label class="sr-only" for="contact-search">Buscar contactos</label>
+    <input id="contact-search" class="w-full rounded-full border border-chocolate/15 px-4 py-2 sm:w-72" type="search" name="q" value="{{ request.GET.q }}" placeholder="Nombre, correo o teléfono">
+    <label class="sr-only" for="contact-status">Estado</label>
+    <select id="contact-status" class="rounded-full border border-chocolate/15 px-4 py-2" name="estado">
+      <option value="">Todos los estados</option>
+      {% for value, label in statuses %}
+        <option value="{{ value }}" {% if request.GET.estado == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" name="seguimiento" value="pendiente" {% if request.GET.seguimiento == "pendiente" %}checked{% endif %}>
+      Seguimiento pendiente
+    </label>
+    <button class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" type="submit">Filtrar</button>
+  </form>
+  {% if contacts %}
+    <div class="overflow-x-auto rounded-3xl border border-chocolate/10 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-chocolate/10 text-chocolate/70">
+          <tr>
+            <th class="px-4 py-3">Contacto</th>
+            <th class="px-4 py-3">Estado</th>
+            <th class="px-4 py-3">Origen</th>
+            <th class="px-4 py-3">Seguimiento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contact in contacts %}
+            <tr class="border-b border-chocolate/5">
+              <td class="px-4 py-3">
+                <a class="font-semibold text-cherry" href="{% url 'crm:contact_detail' contact.pk %}">{{ contact.full_name }}</a>
+                <p class="text-chocolate/70">{{ contact.email|default:contact.phone }}</p>
+              </td>
+              <td class="px-4 py-3">{{ contact.get_status_display }}</td>
+              <td class="px-4 py-3">{{ contact.get_origin_display }}</td>
+              <td class="px-4 py-3">{{ contact.next_follow_up|default:"—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    <section class="rounded-3xl border border-dashed border-chocolate/20 bg-white p-8">
+      <h2 class="font-display text-2xl text-chocolate">Todavía no hay contactos</h2>
+      <p class="mt-2 text-chocolate/80">Registra un lead o importa un CSV cuando tengas contactos reales.</p>
+    </section>
+  {% endif %}
+{% endblock %}

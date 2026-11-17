@@ -1,0 +1,54 @@
+name: helmar-reposteria
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: helymar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-helymar}
+      POSTGRES_USER: ${POSTGRES_USER:-helymar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - helymar_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-helymar} -d ${POSTGRES_DB:-helymar}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - helymar
+
+  web:
+    build: .
+    image: helymar-web
+    container_name: helymar-web
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py makemigrations --noinput &&
+             python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput --ignore "src/*" &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2"
+    volumes:
+      - .:/app
+      - helymar_media:/app/media
+    ports:
+      - "127.0.0.1:8001:8000"
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DATABASE_URL: postgres://${POSTGRES_USER:-helymar}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-helymar}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - helymar
+
+networks:
+  helymar:
+    name: helymar
+
+volumes:
+  helymar_pg:
+  helymar_media:

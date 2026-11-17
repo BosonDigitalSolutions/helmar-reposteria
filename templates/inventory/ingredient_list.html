@@ -1,0 +1,65 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Inventario{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-display text-4xl text-chocolate">Inventario</h1>
+      <p class="mt-2 text-chocolate/80">La existencia cambia con compras, mermas y ajustes. Hornear no la descuenta solo.</p>
+    </div>
+    {% if perms.inventory.add_ingredient %}
+      <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'inventory:ingredient_create' %}">Nuevo insumo</a>
+    {% endif %}
+  </div>
+  {% if perms.inventory.view_expense %}
+    <div class="mb-4 flex flex-wrap gap-2">
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'inventory:expense_list' %}">Gastos</a>
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'inventory:investment_list' %}">Inversiones</a>
+    </div>
+  {% endif %}
+  {% if ingredients %}
+    <div class="overflow-x-auto rounded-3xl border border-chocolate/10 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-chocolate/10 text-chocolate/70">
+          <tr>
+            <th class="px-4 py-3">Insumo</th>
+            <th class="px-4 py-3">Existencia</th>
+            {% if perms.inventory.view_expense %}
+              <th class="px-4 py-3">Costo promedio</th>
+            {% endif %}
+            <th class="px-4 py-3">Reorden</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ingredient in ingredients %}
+            <tr class="border-b border-chocolate/5 {% if ingredient.is_low %}text-cherry{% endif %}">
+              <td class="px-4 py-3">
+                {% if perms.inventory.change_ingredient %}
+                  <a class="font-semibold text-cherry" href="{% url 'inventory:ingredient_update' ingredient.pk %}">{{ ingredient.name }}</a>
+                {% else %}
+                  <span class="font-semibold">{{ ingredient.name }}</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3">{{ ingredient.stock_quantity }} {{ ingredient.get_unit_display }}</td>
+              {% if perms.inventory.view_expense %}
+                <td class="px-4 py-3">{{ ingredient.average_unit_cost }}</td>
+              {% endif %}
+              <td class="px-4 py-3">
+                {{ ingredient.reorder_level }}
+                {% if perms.inventory.add_stockmovement %}
+                  · <a class="text-cherry" href="{% url 'inventory:movement_create' ingredient.pk %}">Movimiento</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <section class="rounded-3xl border border-dashed border-chocolate/20 bg-white p-8">
+      <h2 class="font-display text-2xl text-chocolate">Todavía no hay insumos</h2>
+      <p class="mt-2 text-chocolate/80">Da de alta harina, huevo o lo que uses. El stock entra cuando registras la compra.</p>
+    </section>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,152 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HelyMar Repostería: pasteles, galletas y postres personalizados para tus momentos especiales.">
+  <title>HelyMar Repostería | Hecho con cariño</title>
+  <link rel="icon" href="{% static 'img/helymar-logo.jpeg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body data-whatsapp="{{ helymar_whatsapp_number }}">
+  <div class="announcement">🍒 HECHO A MANO PARA TUS MOMENTOS MÁS DULCES</div>
+  {% include "components/public_header.html" %}
+  <main>
+    <section class="hero snap-panel" id="inicio">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">HelyMar · Repostería artesanal</span>
+          <h1>Pequeños detalles, <em>grandes momentos.</em></h1>
+          <p>Pasteles, galletas y postres personalizados que hacen cada celebración todavía más especial. Diseñados con cariño, preparados para ti.</p>
+          <div class="actions">
+            <button type="button" class="btn" data-open-catalog>Explorar catálogo ↗</button>
+            <a href="#" class="btn outline" data-whatsapp>Cotizar ↗</a>
+          </div>
+        </div>
+        <div class="hero-photo">
+          <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1000&q=85" alt="Pastel artesanal decorado">
+          <div class="stamp">♡ Cada detalle cuenta</div>
+        </div>
+      </div>
+    </section>
+    <section class="benefits-panel snap-panel" id="esencia">
+      <div class="container">
+        <div class="center">
+          <span class="eyebrow">Nuestra esencia</span>
+          <h2 class="section-title">Dulzura en cada detalle</h2>
+          <p class="section-lead">Momentos únicos, hechos especialmente para ti.</p>
+        </div>
+        <div class="benefits">
+          <div class="benefit"><div class="emoji">🎀</div><h3>Hecho para ti</h3><p>Diseños personalizados para cada ocasión y cada historia.</p></div>
+          <div class="benefit"><div class="emoji">🍒</div><h3>Toque artesanal</h3><p>Creaciones elaboradas con atención a los pequeños detalles.</p></div>
+          <div class="benefit"><div class="emoji">🎂</div><h3>Momentos especiales</h3><p>Ideas dulces para cumpleaños, aniversarios y celebraciones.</p></div>
+          <div class="actions section-actions">
+            <button type="button" class="btn" data-open-catalog>Explorar catálogo ↗</button>
+            <a href="#" class="btn outline" data-whatsapp>Cotizar ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="custom-panel snap-panel" id="personalizados">
+      <div class="container custom">
+        <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1000&q=85" alt="Postres artesanales">
+        <div>
+          <span class="eyebrow">Tu idea, nuestra inspiración</span>
+          <h2 class="section-title">Tan único como tu celebración</h2>
+          <p>¿Tienes una temática, una paleta de colores o una idea especial? Cuéntanos qué imaginas y prepararemos una propuesta personalizada para tu evento.</p>
+          <ul class="steps">
+            <li><b>1</b> Elige el tipo de postre.</li>
+            <li><b>2</b> Cuéntanos la temática y la fecha.</li>
+            <li><b>3</b> Solicita tu cotización por WhatsApp.</li>
+          </ul>
+          <div class="actions">
+            <button type="button" class="btn" data-open-catalog>Explorar catálogo ↗</button>
+            <a class="btn outline" href="#" data-whatsapp>Cotizar ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="faq-panel snap-panel" id="preguntas">
+      <div class="container">
+        <div class="center">
+          <span class="eyebrow">Todo lo que necesitas saber</span>
+          <h2 class="section-title">Preguntas frecuentes</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>¿Puedo solicitar un diseño personalizado?</summary>
+            <p>¡Sí! Cuéntanos tu idea por WhatsApp. Los diseños se confirman según posibilidades de elaboración y disponibilidad.</p>
+          </details>
+          <details>
+            <summary>¿Con cuánta anticipación debo hacer mi pedido?</summary>
+            <p>La anticipación depende del tipo de producto, la cantidad y la agenda. Consulta tu fecha antes de confirmar.</p>
+          </details>
+          <details>
+            <summary>¿Dónde entregan los pedidos?</summary>
+            <p>Las zonas, horarios y costos de entrega se confirman directamente al cotizar.</p>
+          </details>
+          <details>
+            <summary>¿Los precios que aparecen aquí son definitivos?</summary>
+            <p>No. Cuando el catálogo muestre un precio, será un precio base. Cada cotización dependerá de tamaño, ingredientes, complejidad y cantidad.</p>
+          </details>
+        </div>
+        <div class="actions section-actions">
+          <button type="button" class="btn" data-open-catalog>Explorar catálogo ↗</button>
+          <a class="btn outline" href="#" data-whatsapp>Cotizar ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dialog id="catalogModal" class="catalog-modal" aria-labelledby="catalogTitle">
+    <div class="modal-head">
+      <div>
+        <span class="eyebrow">Nuestras creaciones</span>
+        <h2 id="catalogTitle" class="section-title">Explora el catálogo 🍒</h2>
+        <p>Los productos publicados salen de la base de datos de HelyMar.</p>
+      </div>
+      <button type="button" class="modal-close" id="closeCatalog" aria-label="Cerrar catálogo">×</button>
+    </div>
+    <div class="catalog-controls">
+      <div class="filters" id="filters">
+        <button type="button" class="filter active" data-filter="todos">Todos</button>
+        {% for category in categories %}
+          <button type="button" class="filter" data-filter="{{ category.slug }}">{{ category.name }}</button>
+        {% endfor %}
+      </div>
+      <input class="search" id="search" placeholder="Buscar algo delicioso..." aria-label="Buscar productos">
+    </div>
+    <div class="products" id="products">
+      <p class="empty">El catálogo se publicará aquí cuando haya productos reales.</p>
+    </div>
+  </dialog>
+  {{ products|json_script:"catalog-data" }}
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2 style="margin:0;font-size:32px">HelyMar 🍒</h2>
+          <p>Repostería artesanal y personalizada. Creaciones dulces para celebrar lo que más importa.</p>
+        </div>
+        <div>
+          <strong>Explora</strong>
+          <p>
+            <button type="button" class="footer-catalog" data-open-catalog>Catálogo</button><br>
+            <a href="{% url 'core:landing' %}#personalizados">Personalizados</a>
+          </p>
+        </div>
+        <div>
+          <strong>Contáctanos</strong>
+          <p>Solicita información y cotizaciones directamente por WhatsApp.</p>
+          <p><a href="{% url 'core:privacy' %}">Aviso de privacidad</a></p>
+        </div>
+      </div>
+      <div class="copyright">© {% now "Y" %} HelyMar Repostería · Hecho con cariño.</div>
+    </div>
+  </footer>
+  <script src="{% static 'js/landing.js' %}"></script>
+</body>
+</html>

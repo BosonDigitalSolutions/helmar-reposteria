@@ -1,0 +1,11 @@
+{% if page_obj.has_other_pages %}
+  <nav class="mt-6 flex items-center gap-3 text-sm" aria-label="Paginación">
+    {% if page_obj.has_previous %}
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 font-semibold text-chocolate" href="?page={{ page_obj.previous_page_number }}{% if filters %}&{{ filters }}{% endif %}">Anterior</a>
+    {% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 font-semibold text-chocolate" href="?page={{ page_obj.next_page_number }}{% if filters %}&{{ filters }}{% endif %}">Siguiente</a>
+    {% endif %}
+  </nav>
+{% endif %}

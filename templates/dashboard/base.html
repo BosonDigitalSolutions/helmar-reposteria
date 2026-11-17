@@ -1,0 +1,75 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Panel{% endblock %} · HelyMar</title>
+  <link rel="icon" href="{% static 'img/helymar-logo.jpeg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+</head>
+<body class="min-h-screen bg-cream font-sans text-ink">
+  <div class="min-h-screen md:grid md:grid-cols-[16rem_1fr]">
+    <aside id="sidebar" class="hidden border-r border-chocolate/10 bg-chocolate text-cream md:flex md:flex-col" aria-label="Secciones del panel">
+      <a href="{% url 'dashboard:home' %}" class="flex items-center gap-3 px-5 py-6">
+        <img src="{% static 'img/helymar-logo.jpeg' %}" alt="" class="h-12 w-14 rounded-lg bg-cream object-contain">
+        <span class="font-display text-2xl">HelyMar</span>
+      </a>
+      <nav class="flex flex-1 flex-col gap-1 px-3">
+        <a href="{% url 'dashboard:home' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'dashboard' %}bg-cherry text-white{% else %}text-cream{% endif %}">Inicio</a>
+        {% if perms.catalog.view_product %}
+          <a href="{% url 'catalog:product_list' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'catalog' %}bg-cherry text-white{% else %}text-cream{% endif %}">Catálogo</a>
+        {% endif %}
+        {% if perms.crm.view_contact %}
+          <a href="{% url 'crm:contact_list' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'crm' and request.resolver_match.url_name != 'opportunity_board' and request.resolver_match.url_name != 'opportunity_create' %}bg-cherry text-white{% else %}text-cream{% endif %}">Clientes</a>
+          <a href="{% url 'crm:opportunity_board' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.url_name == 'opportunity_board' or request.resolver_match.url_name == 'opportunity_create' %}bg-cherry text-white{% else %}text-cream{% endif %}">Oportunidades</a>
+        {% endif %}
+        {% if perms.quotations.view_quote %}
+          <a href="{% url 'quotations:quote_list' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'quotations' %}bg-cherry text-white{% else %}text-cream{% endif %}">Cotizaciones</a>
+        {% endif %}
+        {% if perms.orders.view_order %}
+          <a href="{% url 'orders:calendar' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'orders' %}bg-cherry text-white{% else %}text-cream{% endif %}">Pedidos</a>
+        {% endif %}
+        {% if perms.production.view_productionjob %}
+          <a href="{% url 'production:calendar' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'production' %}bg-cherry text-white{% else %}text-cream{% endif %}">Producción</a>
+        {% endif %}
+        {% if perms.inventory.view_ingredient %}
+          <a href="{% url 'inventory:ingredient_list' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'inventory' %}bg-cherry text-white{% else %}text-cream{% endif %}">Inventario</a>
+        {% endif %}
+        {% if perms.inventory.view_expense %}
+          <a href="{% url 'reports:result' %}" class="rounded-full px-4 py-2 text-sm font-semibold {% if request.resolver_match.namespace == 'reports' %}bg-cherry text-white{% else %}text-cream{% endif %}">Resultado</a>
+        {% endif %}
+      </nav>
+    </aside>
+    <div class="flex min-w-0 flex-col">
+      <header class="flex items-center justify-between gap-4 border-b border-chocolate/10 bg-white px-4 py-3 md:px-8">
+        <button id="sidebarToggle" class="rounded-full border border-chocolate/15 px-3 py-2 text-sm font-semibold text-cherry md:hidden" type="button" aria-expanded="false" aria-controls="sidebar">Menú</button>
+        <p class="font-display text-lg text-chocolate">HelyMar Repostería</p>
+        <div class="flex items-center gap-3 text-sm">
+          <span class="hidden sm:inline">{{ user.get_full_name|default:user.username }} · {{ user.get_role_display }}</span>
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button class="rounded-full bg-cherry px-4 py-2 font-semibold text-white" type="submit">Cerrar sesión</button>
+          </form>
+        </div>
+      </header>
+      <main class="flex-1 p-4 md:p-8">
+        {% if messages %}
+          <ul class="mb-4 space-y-2">
+            {% for message in messages %}
+              <li class="rounded-2xl bg-white px-4 py-3 text-sm" role="status">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

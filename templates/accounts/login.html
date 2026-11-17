@@ -1,0 +1,44 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión | HelyMar Repostería</title>
+  <link rel="icon" href="{% static 'img/helymar-logo.jpeg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body class="page-plain" data-whatsapp="{{ helymar_whatsapp_number }}">
+  {% include "components/public_header.html" %}
+  <main>
+    <div class="container">
+      <form class="login-card" method="post" action="{% url 'accounts:login' %}">
+        {% csrf_token %}
+        <span class="eyebrow">Personal HelyMar</span>
+        <h1>Iniciar sesión</h1>
+        <p>El acceso al panel es solo para el equipo. No hay registro público.</p>
+        {% if form.non_field_errors %}
+          <div class="form-errors" role="alert">
+            {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+        {% for field in form %}
+          <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <p class="form-errors" role="alert">{{ field.errors|striptags }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+    </div>
+  </main>
+  <script src="{% static 'js/landing.js' %}"></script>
+</body>
+</html>

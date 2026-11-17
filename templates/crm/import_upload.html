@@ -1,0 +1,13 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Importar contactos{% endblock %}
+
+{% block content %}
+  <h1 class="mb-2 font-display text-4xl text-chocolate">Importar contactos</h1>
+  <p class="mb-6 max-w-2xl text-chocolate/80">Primero verás una vista previa. Los duplicados no se fusionan. Si hay ambigüedad, el registro queda omitido salvo que elijas crear un contacto nuevo.</p>
+  <form class="max-w-xl rounded-3xl bg-white p-6" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}{% include "components/field.html" %}{% endfor %}
+    <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Revisar archivo</button>
+  </form>
+{% endblock %}

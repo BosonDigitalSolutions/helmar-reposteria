@@ -1,0 +1,44 @@
+{% extends "dashboard/base.html" %}
+{% load money %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+  <section>
+    <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Operación</p>
+    <h1 class="mt-2 font-display text-4xl text-chocolate">Panel</h1>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      {% if open_quotes is not None %}
+        <a class="block rounded-3xl border border-coral/40 bg-white p-6 shadow-sm" href="{% url 'quotations:quote_list' %}">
+          <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Cotizaciones abiertas</p>
+          <p class="mt-2 font-display text-4xl text-chocolate">{{ open_quotes }}</p>
+        </a>
+      {% endif %}
+      {% if week_deliveries is not None %}
+        <a class="block rounded-3xl border border-coral/40 bg-white p-6 shadow-sm" href="{% url 'orders:calendar' %}">
+          <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Entregas de la semana</p>
+          <p class="mt-2 font-display text-4xl text-chocolate">{{ week_deliveries }}</p>
+        </a>
+      {% endif %}
+      {% if jobs_today is not None %}
+        <a class="block rounded-3xl border border-coral/40 bg-white p-6 shadow-sm" href="{% url 'production:calendar' %}">
+          <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Fichas de hoy</p>
+          <p class="mt-2 font-display text-4xl text-chocolate">{{ jobs_today }}</p>
+        </a>
+      {% endif %}
+      {% if low_stock is not None %}
+        <a class="block rounded-3xl border border-coral/40 bg-white p-6 shadow-sm" href="{% url 'inventory:ingredient_list' %}">
+          <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Insumos por reponer</p>
+          <p class="mt-2 font-display text-4xl text-chocolate">{{ low_stock }}</p>
+        </a>
+      {% endif %}
+      {% if month_result %}
+        <a class="block rounded-3xl border border-coral/40 bg-white p-6 shadow-sm" href="{% url 'reports:result' %}">
+          <p class="text-xs font-semibold uppercase tracking-widest text-cherry">Resultado del mes</p>
+          <p class="mt-2 font-display text-4xl text-chocolate">{{ month_result.operating|pesos }}</p>
+          <p class="mt-2 text-sm text-chocolate/80">Cobros menos compras y gastos. Las inversiones van aparte.</p>
+        </a>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

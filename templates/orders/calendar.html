@@ -1,0 +1,16 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Calendario de entregas{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="font-display text-4xl text-chocolate">Entregas</h1>
+    <div class="flex flex-wrap gap-2">
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold text-chocolate" href="{% url 'orders:order_list' %}">Ver lista</a>
+      {% if perms.orders.add_order %}
+        <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'orders:order_create' %}">Nuevo pedido</a>
+      {% endif %}
+    </div>
+  </div>
+  {% include "components/month_calendar.html" %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "dashboard/base.html" %}
+{% load money %}
+
+{% block title %}Gastos{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="font-display text-4xl text-chocolate">Gastos</h1>
+    <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'inventory:expense_create' %}">Nuevo gasto</a>
+  </div>
+  {% if expenses %}
+    <ul class="space-y-2 text-sm">
+      {% for expense in expenses %}
+        <li class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3">
+          <span>{{ expense.occurred_on|date:"d/m/Y" }} · {{ expense.get_category_display }} · {{ expense.amount|pesos }}{% if expense.note %} · {{ expense.note }}{% endif %}</span>
+          <span class="flex gap-3">
+            <a class="font-semibold text-cherry" href="{% url 'inventory:expense_update' expense.pk %}">Editar</a>
+            <a class="font-semibold text-cherry" href="{% url 'inventory:expense_delete' expense.pk %}">Eliminar</a>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <section class="rounded-3xl border border-dashed border-chocolate/20 bg-white p-8">
+      <h2 class="font-display text-2xl text-chocolate">Todavía no hay gastos</h2>
+    </section>
+  {% endif %}
+{% endblock %}

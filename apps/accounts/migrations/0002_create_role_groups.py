@@ -1,0 +1,25 @@
+from django.db import migrations
+
+GROUPS = ("Administrador", "Ventas", "Producción")
+
+
+def create_groups(apps, schema_editor):
+    Group = apps.get_model("auth", "Group")
+    for name in GROUPS:
+        Group.objects.using(schema_editor.connection.alias).get_or_create(name=name)
+
+
+def remove_groups(apps, schema_editor):
+    Group = apps.get_model("auth", "Group")
+    Group.objects.using(schema_editor.connection.alias).filter(name__in=GROUPS).delete()
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("accounts", "0001_initial"),
+        ("auth", "0012_alter_user_first_name_max_length"),
+    ]
+
+    operations = [
+        migrations.RunPython(create_groups, remove_groups),
+    ]

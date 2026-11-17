@@ -1,0 +1,98 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{{ contact.full_name }}{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-cherry">{{ contact.get_status_display }}</p>
+      <h1 class="font-display text-4xl text-chocolate">{{ contact.full_name }}</h1>
+      <p class="mt-2 text-chocolate/80">{{ contact.company|default:"Sin empresa" }} · {{ contact.get_origin_display }}</p>
+    </div>
+    <div class="flex gap-2">
+      {% if perms.crm.change_contact %}
+        <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'crm:contact_update' contact.pk %}">Editar</a>
+      {% endif %}
+      {% if perms.crm.delete_contact %}
+        <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'crm:contact_delete' contact.pk %}">Eliminar</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="grid gap-4 lg:grid-cols-2">
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Datos</h2>
+      <dl class="mt-4 space-y-2 text-sm">
+        <div><dt class="font-semibold">Correo</dt><dd>{{ contact.email|default:"—" }}</dd></div>
+        <div><dt class="font-semibold">Teléfono</dt><dd>{{ contact.phone|default:"—" }}</dd></div>
+        <div><dt class="font-semibold">WhatsApp</dt><dd>{{ contact.whatsapp|default:"—" }}</dd></div>
+        <div><dt class="font-semibold">Responsable</dt><dd>{{ contact.owner|default:"—" }}</dd></div>
+        <div><dt class="font-semibold">Registro</dt><dd>{{ contact.registered_at }}</dd></div>
+        <div><dt class="font-semibold">Etiquetas</dt><dd>{% for tag in contact.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd></div>
+        <div><dt class="font-semibold">Observaciones</dt><dd>{{ contact.observations|default:"—" }}</dd></div>
+      </dl>
+    </section>
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Compras</h2>
+      <p class="mt-3 text-sm text-chocolate/80">Sin compras registradas. Las cotizaciones, los pedidos y los pagos se mostrarán cuando esos módulos existan. Aceptar una oportunidad no convierte el contacto en cliente.</p>
+      <dl class="mt-4 space-y-2 text-sm">
+        <div><dt class="font-semibold">Importe total comprado</dt><dd>Sin compras registradas</dd></div>
+        <div><dt class="font-semibold">Última compra</dt><dd>—</dd></div>
+        <div><dt class="font-semibold">Productos comprados</dt><dd>—</dd></div>
+      </dl>
+    </section>
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Seguimiento</h2>
+      {% if contact.next_follow_up %}
+        <p class="mt-3 text-sm {% if contact.next_follow_up <= today %}font-semibold text-cherry{% endif %}">Próximo seguimiento: {{ contact.next_follow_up }}</p>
+      {% else %}
+        <p class="mt-3 text-sm text-chocolate/80">No hay un seguimiento agendado.</p>
+      {% endif %}
+    </section>
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Oportunidades</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {% for opportunity in contact.opportunities.all %}
+          <li>{{ opportunity.title }} · {{ opportunity.get_stage_display }}</li>
+        {% empty %}
+          <li class="text-chocolate/80">Sin oportunidades.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+  <div class="mt-4 grid gap-4 lg:grid-cols-2">
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Notas comerciales</h2>
+      <ul class="mt-3 space-y-3 text-sm">
+        {% for note in contact.notes.all %}
+          <li><p>{{ note.body }}</p><p class="text-chocolate/60">{{ note.created_at }}</p></li>
+        {% empty %}
+          <li class="text-chocolate/80">Sin notas.</li>
+        {% endfor %}
+      </ul>
+      {% if perms.crm.add_note %}
+        <form class="mt-4" method="post" action="{% url 'crm:note_create' contact.pk %}">
+          {% csrf_token %}
+          {% include "components/field.html" with field=note_form.body %}
+          <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Agregar nota</button>
+        </form>
+      {% endif %}
+    </section>
+    <section class="rounded-3xl bg-white p-6">
+      <h2 class="font-display text-2xl text-chocolate">Actividades</h2>
+      <ul class="mt-3 space-y-3 text-sm">
+        {% for activity in contact.activities.all %}
+          <li><p>{{ activity.summary }}</p><p class="text-chocolate/60">{{ activity.created_at }}</p></li>
+        {% empty %}
+          <li class="text-chocolate/80">Sin actividades.</li>
+        {% endfor %}
+      </ul>
+      {% if perms.crm.add_activity %}
+        <form class="mt-4" method="post" action="{% url 'crm:activity_create' contact.pk %}">
+          {% csrf_token %}
+          {% include "components/field.html" with field=activity_form.summary %}
+          <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Registrar actividad</button>
+        </form>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

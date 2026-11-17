@@ -1,0 +1,16 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Oportunidades{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-display text-4xl text-chocolate">Oportunidades</h1>
+      <p class="mt-2 max-w-2xl text-chocolate/80">La etapa de la oportunidad no cambia el estado del contacto. Ganar una oportunidad no lo vuelve cliente.</p>
+    </div>
+    {% if perms.crm.add_opportunity %}
+      <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'crm:opportunity_create' %}">Nueva oportunidad</a>
+    {% endif %}
+  </div>
+  {% include "crm/pipeline_board.html" %}
+{% endblock %}

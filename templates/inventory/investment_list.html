@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% load money %}
+
+{% block title %}Inversiones{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-display text-4xl text-chocolate">Inversiones</h1>
+      <p class="mt-2 text-chocolate/80">Un horno o una batidora no se restan de la ganancia del mes. Se ven aparte.</p>
+    </div>
+    <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'inventory:investment_create' %}">Nueva inversión</a>
+  </div>
+  {% if investments %}
+    <ul class="space-y-2 text-sm">
+      {% for investment in investments %}
+        <li class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3">
+          <span>{{ investment.acquired_on|date:"d/m/Y" }} · {{ investment.name }} · {{ investment.amount|pesos }}</span>
+          <span class="flex gap-3">
+            <a class="font-semibold text-cherry" href="{% url 'inventory:investment_update' investment.pk %}">Editar</a>
+            <a class="font-semibold text-cherry" href="{% url 'inventory:investment_delete' investment.pk %}">Eliminar</a>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <section class="rounded-3xl border border-dashed border-chocolate/20 bg-white p-8">
+      <h2 class="font-display text-2xl text-chocolate">Todavía no hay inversiones</h2>
+    </section>
+  {% endif %}
+{% endblock %}

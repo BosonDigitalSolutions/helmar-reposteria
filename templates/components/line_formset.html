@@ -1,0 +1,20 @@
+{{ lines.management_form }}
+{% if lines.non_form_errors %}
+  <p class="mb-4 text-sm text-cherry" role="alert">{{ lines.non_form_errors|striptags }}</p>
+{% endif %}
+{% for line in lines %}
+  <fieldset class="mb-4 rounded-2xl border border-chocolate/10 bg-white p-4">
+    <legend class="px-2 text-sm font-semibold text-chocolate">Partida</legend>
+    {% for hidden in line.hidden_fields %}{{ hidden }}{% endfor %}
+    {% if line.non_field_errors %}
+      <p class="mb-3 text-sm text-cherry" role="alert">{{ line.non_field_errors|striptags }}</p>
+    {% endif %}
+    {% include "components/field.html" with field=line.description %}
+    {% include "components/field.html" with field=line.product %}
+    {% include "components/field.html" with field=line.quantity %}
+    {% include "components/field.html" with field=line.unit_price %}
+    {% if line.DELETE %}
+      {% include "components/field.html" with field=line.DELETE %}
+    {% endif %}
+  </fieldset>
+{% endfor %}

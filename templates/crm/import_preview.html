@@ -1,0 +1,57 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Vista previa{% endblock %}
+
+{% block content %}
+  <h1 class="mb-2 font-display text-4xl text-chocolate">Vista previa</h1>
+  <p class="mb-6 text-chocolate/80">{{ batch.original_name }}. Revisa cada fila antes de importar.</p>
+  <form method="post" action="{% url 'crm:import_confirm' batch.pk %}">
+    {% csrf_token %}
+    <div class="overflow-x-auto rounded-3xl bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-chocolate/10">
+          <tr>
+            <th class="px-4 py-3">Fila</th>
+            <th class="px-4 py-3">Contacto</th>
+            <th class="px-4 py-3">Revisión</th>
+            <th class="px-4 py-3">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in batch.rows.all %}
+            <tr class="border-b border-chocolate/5">
+              <td class="px-4 py-3">{{ row.line_number }}</td>
+              <td class="px-4 py-3">{{ row.payload.first_name }} {{ row.payload.last_name }}<br>{{ row.payload.email }}</td>
+              <td class="px-4 py-3">
+                {% if row.errors %}
+                  <p class="text-cherry" role="alert">{{ row.errors|join:", " }}</p>
+                {% elif row.is_ambiguous %}
+                  <p>Hay más de un contacto parecido. No se fusionará.</p>
+                {% elif row.is_duplicate %}
+                  <p>Ya existe un contacto con el mismo correo o teléfono.</p>
+                {% else %}
+                  <p>Listo para crear.</p>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3">
+                {% if row.errors %}
+                  <span>Se omitirá</span>
+                {% else %}
+                  <label class="sr-only" for="action-{{ row.pk }}">Acción de la fila {{ row.line_number }}</label>
+                  <select id="action-{{ row.pk }}" name="action-{{ row.pk }}" class="rounded-xl border border-chocolate/15 px-2 py-1">
+                    <option value="omitir" {% if row.action == "omitir" %}selected{% endif %}>Omitir</option>
+                    <option value="crear" {% if row.action == "crear" %}selected{% endif %}>Crear contacto nuevo</option>
+                  </select>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 flex gap-3">
+      <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Importar selección</button>
+      <a class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" href="{% url 'crm:contact_list' %}">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

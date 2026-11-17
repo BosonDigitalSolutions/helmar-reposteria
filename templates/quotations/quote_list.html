@@ -1,0 +1,57 @@
+{% extends "dashboard/base.html" %}
+{% load money %}
+
+{% block title %}Cotizaciones{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="font-display text-4xl text-chocolate">Cotizaciones</h1>
+    {% if perms.quotations.add_quote %}
+      <a class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" href="{% url 'quotations:quote_create' %}">Nueva cotización</a>
+    {% endif %}
+  </div>
+  <form class="mb-4 flex flex-wrap gap-2" method="get">
+    <label class="sr-only" for="quote-search">Buscar cotizaciones</label>
+    <input id="quote-search" class="w-full rounded-full border border-chocolate/15 px-4 py-2 sm:w-72" type="search" name="q" value="{{ request.GET.q }}" placeholder="Folio o cliente">
+    <label class="sr-only" for="quote-status">Estado</label>
+    <select id="quote-status" class="rounded-full border border-chocolate/15 px-4 py-2" name="estado">
+      <option value="">Todos los estados</option>
+      {% for value, label in statuses %}
+        <option value="{{ value }}" {% if request.GET.estado == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="rounded-full border border-chocolate/20 px-4 py-2 text-sm font-semibold" type="submit">Filtrar</button>
+  </form>
+  {% if quotes %}
+    <div class="overflow-x-auto rounded-3xl border border-chocolate/10 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-chocolate/10 text-chocolate/70">
+          <tr>
+            <th class="px-4 py-3">Folio</th>
+            <th class="px-4 py-3">Cliente</th>
+            <th class="px-4 py-3">Evento</th>
+            <th class="px-4 py-3">Total</th>
+            <th class="px-4 py-3">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for quote in quotes %}
+            <tr class="border-b border-chocolate/5">
+              <td class="px-4 py-3"><a class="font-semibold text-cherry" href="{% url 'quotations:quote_detail' quote.pk %}">{{ quote.folio }}</a></td>
+              <td class="px-4 py-3">{{ quote.contact.full_name }}</td>
+              <td class="px-4 py-3">{{ quote.event_date|date:"d/m/Y" }}</td>
+              <td class="px-4 py-3">{{ quote.total|pesos }}</td>
+              <td class="px-4 py-3">{{ quote.get_status_display }}{% if quote.version %} · v{{ quote.version }}{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    <section class="rounded-3xl border border-dashed border-chocolate/20 bg-white p-8">
+      <h2 class="font-display text-2xl text-chocolate">Todavía no hay cotizaciones</h2>
+      <p class="mt-2 text-chocolate/80">Cuando armes una, aquí verás el folio, el cliente y el total.</p>
+    </section>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Ficha de cocina{% endblock %}
+
+{% block content %}
+  <p class="text-xs font-semibold uppercase tracking-widest text-cherry">{{ job.get_status_display }}</p>
+  <h1 class="mt-2 font-display text-4xl text-chocolate">{{ job.summary }}</h1>
+  <p class="mt-2 text-chocolate/80">{{ job.order.contact.full_name }} · {{ job.order.get_delivery_type_display }} · entrega {{ job.order.event_at|date:"d/m/Y H:i" }}</p>
+  {% if perms.production.change_productionjob and job.order.status != "cancelado" %}
+    <form class="mt-6 max-w-xl" method="post">
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+      {% for field in form.visible_fields %}
+        {% include "components/field.html" with field=field %}
+      {% endfor %}
+      <button class="rounded-full bg-cherry px-4 py-2 text-sm font-semibold text-white" type="submit">Guardar ficha</button>
+    </form>
+  {% else %}
+    <section class="mt-6 max-w-xl rounded-3xl border border-chocolate/10 bg-white p-6 text-sm">
+      <p>Preparar: {{ job.scheduled_date|date:"d/m/Y" }}</p>
+      {% if job.decoration %}<p class="mt-2">Decoración: {{ job.decoration }}</p>{% endif %}
+      {% if job.dedication %}<p class="mt-2">Dedicatoria: {{ job.dedication }}</p>{% endif %}
+      {% if job.warnings %}<p class="mt-2">Advertencias: {{ job.warnings }}</p>{% endif %}
+      {% if job.notes %}<p class="mt-2">{{ job.notes }}</p>{% endif %}
+    </section>
+  {% endif %}
+{% endblock %}
